@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dump/screens/ResidentLocation/ResidentLocationView.dart';
 import 'package:dump/screens/Utilities/Utilities.dart';
+import 'package:latlng/latlng.dart';
+
+List<LatLng> markers = [LatLng(0, 0)];
 
 class ResidentHomeView extends StatefulWidget {
   _ResidentHomeViewState createState() => _ResidentHomeViewState();

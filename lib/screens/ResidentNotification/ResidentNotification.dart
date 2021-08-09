@@ -63,15 +63,17 @@ class _ResidentalNotificationState extends State<ResidentalNotification> {
                   Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(5.0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey)),
-                        child: Text("Message " +
-                            documentSnapshot['message'] +
-                            "\n" +
-                            timeago.format(documentSnapshot['timestamp'])),
-                      ))
+                          width: double.infinity,
+                          padding: EdgeInsets.all(5.0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey)),
+                          child: Text(
+                            "Message\n" +
+                                documentSnapshot['message'] +
+                                "\n" +
+                                timeago.format(
+                                    (documentSnapshot['timestamp'].toDate())),
+                          )))
                 ]);
               },
             );

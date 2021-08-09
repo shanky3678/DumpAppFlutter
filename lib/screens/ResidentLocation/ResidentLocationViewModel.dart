@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dump/Model/UserData.dart';
 import 'package:dump/Model/driverData.dart';
 import 'package:dump/locator.dart';
+import 'package:dump/screens/ResidentHomeView/ResidentHomeView.dart';
 import 'package:dump/services/authServices.dart';
 import 'package:dump/services/firebaseServices.dart';
 import 'package:dump/services/locationService.dart';
@@ -10,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:stacked/stacked.dart';
 import 'package:latlng/latlng.dart';
-import 'dart:math';
 
 class ResidentLocationViewModel extends BaseViewModel {
   final LocationService _locationService = locator<LocationService>();
@@ -20,7 +20,7 @@ class ResidentLocationViewModel extends BaseViewModel {
   LocationData get locationData => _locationService.locationData;
   LatLng myLocation = LatLng(0, 0);
   Stream<QuerySnapshot> allDriversData;
-  List<LatLng> driverLocation = [LatLng(0, 0)];
+  // List<LatLng> driverLocation = [LatLng(12.0061663, 74.533465)];
 
   UserData get currentUser => _authService.currentUser;
   ResidentLocationViewModel() {
@@ -48,12 +48,13 @@ class ResidentLocationViewModel extends BaseViewModel {
     _locationService.getCurrentLocation();
     myLocation = LatLng(_locationService.locationData.latitude,
         _locationService.locationData.longitude);
-    var status = await _firebaseService.updateData(
-        userId: currentUser.userId,
-        type: currentUser.type,
-        lon: _locationService.locationData.longitude,
-        lat: _locationService.locationData.latitude);
+    var status = await _firebaseService.updateLocationResidentalUser(
+        _locationService.locationData.longitude,
+        _locationService.locationData.latitude,
+        currentUser.userId);
     if (status) {
+      await _authService.populateCurrentUser(currentUser.userId);
+      notifyListeners();
       var snackBar = SnackBar(content: Text("Adding your current location"));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
@@ -66,11 +67,11 @@ class ResidentLocationViewModel extends BaseViewModel {
   }
 
   void _onLiveLocation(DriverData data) {
-    driverLocation.clear();
+    markers.clear();
     print("sss : ${data.lat} and ${data.lon} and ${data.name} ");
 
-    print("sss2 : ${data.lat} and ${data.lon} and ${data.name} ");
-    driverLocation.add(LatLng(data.lat, data.lon));
+    markers.add(LatLng(data.lat, data.lon));
+    print("markers " + markers.length.toString());
     notifyListeners();
   }
 }

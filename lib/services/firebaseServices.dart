@@ -43,47 +43,47 @@ class FirebaseService {
     }
   }
 
-  Future<bool> updateData(
-      {@required String userId,
-      String name,
-      double lon,
-      double lat,
-      String address,
-      String phoneNumber,
-      @required String type}) async {
-    var status;
-    if (type == Resident) {
-      _residentCollection
-          .doc(userId)
-          .update({
-            "AndroidToken": "",
-            "Name": name,
-            "Address": address,
-            "PhoneNumber": phoneNumber,
-            "Type": type,
-            "UserId": userId,
-            "Lon": lon,
-            "Lat": lat,
-          })
-          .then((value) => status = true)
-          .catchError(() => status = false);
-    } else {
-      _driverCollection
-          .doc(userId)
-          .update({
-            "Name": name,
-            "PhoneNumber": phoneNumber,
-            "Type": type,
-            "UserId": userId,
-            "Address": address,
-            "Lon": lon,
-            "Lat": lat,
-          })
-          .then((value) => status = true)
-          .catchError(() => status = false);
-    }
-    return status;
-  }
+  // Future<bool> updateData(
+  //     {@required String userId,
+  //     String name,
+  //     double lon,
+  //     double lat,
+  //     String address,
+  //     String phoneNumber,
+  //     @required String type}) async {
+  //   var status;
+  //   if (type == Resident) {
+  //     _residentCollection
+  //         .doc(userId)
+  //         .update({
+  //           "AndroidToken": "",
+  //           "Name": name,
+  //           "Address": address,
+  //           "PhoneNumber": phoneNumber,
+  //           "Type": type,
+  //           "UserId": userId,
+  //           "Lon": lon,
+  //           "Lat": lat,
+  //         })
+  //         .then((value) => status = true)
+  //         .catchError(() => status = false);
+  //   } else {
+  //     _driverCollection
+  //         .doc(userId)
+  //         .update({
+  //           "Name": name,
+  //           "PhoneNumber": phoneNumber,
+  //           "Type": type,
+  //           "UserId": userId,
+  //           "Address": address,
+  //           "Lon": lon,
+  //           "Lat": lat,
+  //         })
+  //         .then((value) => status = true)
+  //         .catchError(() => status = false);
+  //   }
+  //   return status;
+  // }
 
   Future<bool> liveLocationUpdate(
       {@required String userId,

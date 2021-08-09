@@ -45,13 +45,21 @@ class ComplaintLanding extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(5.0),
+                        padding: EdgeInsets.all(15.0),
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey)),
-                        child: Text("Your complaint\n\nComplaint " +
-                            documentSnapshot['Complaint'] +
-                            "\nSubject " +
-                            documentSnapshot['subject']),
+                        child: RichText(
+                          text: TextSpan(children: [
+                            TextSpan(
+                                text: documentSnapshot['Complaint'] + "\n\n",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 24)),
+                            TextSpan(
+                                text: documentSnapshot['subject'] + "\n",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 18)),
+                          ]),
+                        ),
                       ))
                 ]);
               },

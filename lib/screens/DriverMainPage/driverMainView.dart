@@ -105,76 +105,81 @@ class _DriverHomeViewState extends State<DriverHomeView> {
               drawer: drawer(),
               body: model.isBusy
                   ? loadingState()
-                  : MapLayoutBuilder(
-                      controller: controller,
-                      builder: (context, transformer) {
-                        final markerPositions = model.allMarkers
-                            .map(transformer.fromLatLngToXYCoords)
-                            .toList();
+                  : Stack(children: [
+                      RaisedButton(
+                        onPressed: () {},
+                        child: Text("Start Trip"),
+                      ),
+                      MapLayoutBuilder(
+                        controller: controller,
+                        builder: (context, transformer) {
+                          final markerPositions = model.allMarkers
+                              .map(transformer.fromLatLngToXYCoords)
+                              .toList();
 
-                        final markerWidgets = markerPositions.map((pos) =>
-                            _buildMarkerWidget(
-                                pos, Colors.green, model, "Home"));
+                          final markerWidgets = markerPositions.map((pos) =>
+                              _buildMarkerWidget(
+                                  pos, Colors.green, model, "Home"));
 
-                        final centerLocation = transformer
-                            .fromLatLngToXYCoords(model.liveLocation);
+                          final centerLocation = transformer
+                              .fromLatLngToXYCoords(model.liveLocation);
 
-                        final centerMarkerWidget = _buildMarkerWidget(
-                            centerLocation,
-                            Colors.red,
-                            model,
-                            model.currentUser.name);
+                          final centerMarkerWidget = _buildMarkerWidget(
+                              centerLocation,
+                              Colors.red,
+                              model,
+                              model.currentUser.name);
 
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onDoubleTap: _onDoubleTap,
-                          onScaleStart: _onScaleStart,
-                          onScaleUpdate: _onScaleUpdate,
-                          onTapUp: (details) {
-                            final location = transformer
-                                .fromXYCoordsToLatLng(details.localPosition);
-
-                            final clicked =
-                                transformer.fromLatLngToXYCoords(location);
-
-                            print(
-                                '${location.longitude}, ${location.latitude}');
-                            print('${clicked.dx}, ${clicked.dy}');
-                            print(
-                                '${details.localPosition.dx}, ${details.localPosition.dy}');
-                          },
-                          child: Listener(
+                          return GestureDetector(
                             behavior: HitTestBehavior.opaque,
-                            onPointerSignal: (event) {
-                              if (event is PointerScrollEvent) {
-                                final delta = event.scrollDelta;
+                            onDoubleTap: _onDoubleTap,
+                            onScaleStart: _onScaleStart,
+                            onScaleUpdate: _onScaleUpdate,
+                            onTapUp: (details) {
+                              final location = transformer
+                                  .fromXYCoordsToLatLng(details.localPosition);
+                              final clicked =
+                                  transformer.fromLatLngToXYCoords(location);
 
-                                controller.zoom -= delta.dy / 1000.0;
-                                setState(() {});
-                              }
+                              print(
+                                  '${location.longitude}, ${location.latitude}');
+                              print('${clicked.dx}, ${clicked.dy}');
+                              print(
+                                  '${details.localPosition.dx}, ${details.localPosition.dy}');
                             },
-                            child: Stack(
-                              children: [
-                                Map(
-                                  controller: controller,
-                                  builder: (context, x, y, z) {
-                                    final url =
-                                        'https://www.google.com/maps/vt/pb=!1m4!1m3!1i$z!2i$x!3i$y!2m3!1e0!2sm!3i420120488!3m7!2sen!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i4111425';
+                            child: Listener(
+                              behavior: HitTestBehavior.opaque,
+                              onPointerSignal: (event) {
+                                if (event is PointerScrollEvent) {
+                                  final delta = event.scrollDelta;
 
-                                    return CachedNetworkImage(
-                                      imageUrl: url,
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
-                                ),
-                                ...markerWidgets,
-                                centerMarkerWidget,
-                              ],
+                                  controller.zoom -= delta.dy / 1000.0;
+                                  setState(() {});
+                                }
+                              },
+                              child: Stack(
+                                children: [
+                                  Map(
+                                    controller: controller,
+                                    builder: (context, x, y, z) {
+                                      final url =
+                                          'https://www.google.com/maps/vt/pb=!1m4!1m3!1i$z!2i$x!3i$y!2m3!1e0!2sm!3i420120488!3m7!2sen!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i4111425';
+
+                                      return CachedNetworkImage(
+                                        imageUrl: url,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  ),
+                                  ...markerWidgets,
+                                  centerMarkerWidget,
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
+                          );
+                        },
+                      ),
+                    ]),
               floatingActionButton: FloatingActionButton(
                 onPressed: () => _gotoDefault(model),
                 tooltip: 'My Location',

@@ -1,6 +1,7 @@
 import 'package:dump/locator.dart';
 import 'package:dump/router/pathnames.dart';
 import 'package:dump/screens/Constant/const.dart';
+import 'package:dump/services/authServices.dart';
 import 'package:dump/services/firebaseServices.dart';
 import 'package:dump/services/navigationService.dart';
 import 'package:dump/widget/LoadingState.dart';
@@ -26,6 +27,7 @@ class _DetailsViewState extends State<DetailsView> {
   TextEditingController _name = TextEditingController();
   TextEditingController _address = TextEditingController();
   final FirebaseService _firebaseService = locator<FirebaseService>();
+  final AuthService _authService = locator<AuthService>();
   final NavigationService _navigationService = locator<NavigationService>();
 
   @override
@@ -117,6 +119,8 @@ class _DetailsViewState extends State<DetailsView> {
                                 longitude,
                                 token);
                             if (result) {
+                              await _authService
+                                  .populateCurrentUser(widget.userId);
                               if (widget.type == Driver) {
                                 _navigationService.popUntil();
                                 await _navigationService

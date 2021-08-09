@@ -49,15 +49,25 @@ class _RequestLandingState extends State<RequestLanding> {
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(5.0),
+                        padding: EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey)),
-                        child: Text("Pick Up Requests\n\nTime " +
-                            documentSnapshot['timeofpickup'] +
-                            "\nDate" +
-                            documentSnapshot['date'] +
-                            "\nAddress" +
-                            documentSnapshot['address']),
+                        child: RichText(
+                          text: TextSpan(children: [
+                            TextSpan(
+                                text: documentSnapshot['address'] + "\n\n",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 24)),
+                            TextSpan(
+                                text: documentSnapshot['date'] + "\n",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 18)),
+                            TextSpan(
+                                text: documentSnapshot['timeofpickup'] + "\n",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 18))
+                          ]),
+                        ),
                       ))
                 ]);
               },

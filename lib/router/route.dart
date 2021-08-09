@@ -1,7 +1,9 @@
 import 'package:dump/screens/About%20Us/aboutUsView.dart';
+import 'package:dump/screens/Calender/CalenderView.dart';
 import 'package:dump/screens/ComplaintPortal/ComplaintPortalView.dart';
 import 'package:dump/screens/DetailsPage/DetailsView.dart';
 import 'package:dump/screens/DriverRequestPortalView/DriverRequestPortalView.dart';
+import 'package:dump/screens/Recycle/RecycleView.dart';
 import 'package:dump/screens/RequestPortal/addRequestPortalView.dart';
 import 'package:dump/screens/ResidentLogin/ResidentLoginView.dart';
 import 'package:dump/screens/ResidentNotification/ResidentNotification.dart';
@@ -33,6 +35,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => ComplaintForm());
     case routeName.DriverRequestPortal:
       return MaterialPageRoute(builder: (context) => DriverRequestPortalView());
+    case routeName.CalenderViewRoute:
+      return MaterialPageRoute(builder: (context) => CalenderDisplay());
+    case routeName.RecyleViewPage:
+      return MaterialPageRoute(builder: (context) => RecycleViewRoute());
     case routeName.TestingPage:
       var argument = settings.arguments as Map;
       return MaterialPageRoute(

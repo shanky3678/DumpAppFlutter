@@ -1,10 +1,14 @@
+import 'package:dump/locator.dart';
+import 'package:dump/router/pathnames.dart';
 import 'package:dump/screens/ComplaintPortal/ComplaintPortalView.dart';
 import 'package:dump/screens/RequestPortal/RequestPortalView.dart';
+import 'package:dump/services/navigationService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Utilities extends StatelessWidget {
+  NavigationService _navigationService = locator<NavigationService>();
   String a = 'Color.fromRGBO(48, 72, 75, 1)';
   @override
   Widget build(BuildContext context) {
@@ -101,8 +105,8 @@ class Utilities extends StatelessWidget {
           width: 354,
           height: 73,
           child: RaisedButton(
-              onPressed: () {
-                print("button clicked");
+              onPressed: () async {
+                await _navigationService.navigateTo(CalenderViewRoute);
               },
               color: Color.fromRGBO(48, 72, 75, 1),
               shape: RoundedRectangleBorder(
@@ -140,8 +144,8 @@ class Utilities extends StatelessWidget {
           width: 354,
           height: 73,
           child: RaisedButton(
-              onPressed: () {
-                print("button clicked");
+              onPressed: () async {
+                await _navigationService.navigateTo(RecyleViewPage);
               },
               color: Color.fromRGBO(48, 72, 75, 1),
               shape: RoundedRectangleBorder(

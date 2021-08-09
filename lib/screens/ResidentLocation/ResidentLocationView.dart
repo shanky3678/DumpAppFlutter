@@ -1,3 +1,4 @@
+import 'package:dump/screens/ResidentHomeView/ResidentHomeView.dart';
 import 'package:dump/screens/ResidentLocation/ResidentLocationViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
@@ -71,13 +72,13 @@ class _ResidentLocationState extends State<ResidentLocation> {
           model.notifyListeners();
         },
         builder: (context, model, _) => Scaffold(
-              body: model.currentUser.lat <= 0.01 ||
+              body: model.currentUser.lat == 0.01 ||
                       model.currentUser.lat == null
                   ? setLocation(context, model)
                   : MapLayoutBuilder(
                       controller: controller,
                       builder: (context, transformer) {
-                        final markerPositions = model.driverLocation
+                        final markerPositions = markers
                             .map(transformer.fromLatLngToXYCoords)
                             .toList();
 

@@ -85,7 +85,8 @@ class Settings extends StatelessWidget {
                                 _locationService.locationData.longitude,
                                 currentUser.userId);
                         if (result) {
-                          await _firebaseService.getUser(currentUser.userId);
+                          await _authService
+                              .populateCurrentUser(currentUser.userId);
                           final snackBar = SnackBar(
                               content: Text("Location updated successfully."));
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);

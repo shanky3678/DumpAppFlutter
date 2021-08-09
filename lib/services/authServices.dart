@@ -57,7 +57,7 @@ class AuthService {
     await authservice
         .signInWithCredential(_phoneAuthCredential)
         .then((value) async => {
-              await _populateCurrentUser(value.user),
+              await populateCurrentUser(value.user.uid),
               if (type == Driver)
                 {
                   result = await checkDetails(phoneNumber, type),
@@ -118,7 +118,7 @@ class AuthService {
     if (user?.uid != null) {
       print(" is log $user");
       if (user != null) {
-        var result = await _populateCurrentUser(user);
+        var result = await populateCurrentUser(user.uid);
         if (result == true) {
           return true;
         } else
@@ -131,10 +131,10 @@ class AuthService {
     }
   }
 
-  Future<bool> _populateCurrentUser(User user) async {
-    if (user != null) {
+  Future<bool> populateCurrentUser(String userId) async {
+    if (userId != null) {
       try {
-        _currentUser = await _firebaseService.getUser(user.uid);
+        _currentUser = await _firebaseService.getUser(userId);
         return true;
       } catch (e) {
         return false;
