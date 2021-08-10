@@ -6,7 +6,6 @@ import 'package:dump/screens/ResidentHomeView/ResidentHomeView.dart';
 import 'package:dump/services/authServices.dart';
 import 'package:dump/services/firebaseServices.dart';
 import 'package:dump/services/locationService.dart';
-import 'package:dump/services/notificationService.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:stacked/stacked.dart';
@@ -68,10 +67,14 @@ class ResidentLocationViewModel extends BaseViewModel {
 
   void _onLiveLocation(DriverData data) {
     markers.clear();
-    print("sss : ${data.lat} and ${data.lon} and ${data.name} ");
 
-    markers.add(LatLng(data.lat, data.lon));
-    print("markers " + markers.length.toString());
-    notifyListeners();
+    print("sss : ${data.lat} and ${data.lon} and ${data.name} ");
+    if ((data.lat != 0.01 || data.lat != null) &&
+        (data.lon != 0.01 || data.lon != null)) {
+      // print("sss : ${data.lat} and ${data.lon} and ${data.name} ");
+      markers.add(LatLng(data.lat, data.lon));
+      print(" ONLINE markers " + markers.length.toString());
+      notifyListeners();
+    }
   }
 }

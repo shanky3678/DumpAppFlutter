@@ -16,15 +16,33 @@ class DriverHomeView extends StatefulWidget {
 }
 
 class _DriverHomeViewState extends State<DriverHomeView> {
+  bool _tripStatus = false;
+  bool get tripStatus => _tripStatus;
   MapController controller = MapController(
     location: LatLng(0, 0),
   );
 
-  void _gotoDefault(model) {
-    model.liveLocationTracking();
-    model.fetchResidentDetails();
-    controller.center = model.liveLocation;
-    // controller.center = LatLng(12.97623, 74.60529);
+  void _gotoDefault(model, context) {
+    if (_tripStatus) {
+      model.liveLocationTracking();
+      model.fetchResidentDetails();
+      controller.center = model.liveLocation;
+      setState(() {});
+    } else {
+      var snackBar = SnackBar(content: Text("You need to start Trip"));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  void startTrip(bool status, model) async {
+    _tripStatus = status;
+    if (status) {
+      model.liveLocationTracking();
+      await model.fetchResidentDetails();
+      controller.center = model.liveLocation;
+    } else {
+      model.endTrip();
+    }
     setState(() {});
   }
 
@@ -83,15 +101,44 @@ class _DriverHomeViewState extends State<DriverHomeView> {
   Widget build(BuildContext context) {
     return ViewModelBuilder<DriverMainPageModel>.reactive(
         onModelReady: (model) {
-          model.fetchResidentDetails();
-          model.liveLocationTracking();
-          controller.center = model.liveLocation;
-          model.notifyListeners();
+          // model.fetchResidentDetails();
+          // model.liveLocationTracking();
+          // controller.center = model.liveLocation;
+          // model.notifyListeners();
         },
         builder: (context, model, _) => Scaffold(
               appBar: AppBar(
                 title: Text('Dump App '),
                 actions: [
+                  _tripStatus
+                      ? Container(
+                          margin: EdgeInsets.all(10.0),
+                          child: RaisedButton(
+                            onPressed: () {
+                              model.endTrip();
+                              startTrip(false, model);
+                            },
+                            color: Colors.red,
+                            child: Text(
+                              "End Trip",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          margin: EdgeInsets.all(10.0),
+                          child: RaisedButton(
+                            onPressed: () {
+                              startTrip(true, model);
+                              model.startTrip();
+                            },
+                            color: Colors.green,
+                            child: Text(
+                              "Start Trip",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
                   IconButton(
                     tooltip: 'Refresh',
                     onPressed: () {
@@ -105,83 +152,83 @@ class _DriverHomeViewState extends State<DriverHomeView> {
               drawer: drawer(),
               body: model.isBusy
                   ? loadingState()
-                  : Stack(children: [
-                      RaisedButton(
-                        onPressed: () {},
-                        child: Text("Start Trip"),
-                      ),
-                      MapLayoutBuilder(
-                        controller: controller,
-                        builder: (context, transformer) {
-                          final markerPositions = model.allMarkers
-                              .map(transformer.fromLatLngToXYCoords)
-                              .toList();
+                  : _tripStatus == false
+                      ? Center(
+                          child:
+                              Text("Your Offline to be Online Start the trip."),
+                        )
+                      : MapLayoutBuilder(
+                          controller: controller,
+                          builder: (context, transformer) {
+                            final markerPositions = model.allMarkers
+                                .map(transformer.fromLatLngToXYCoords)
+                                .toList();
 
-                          final markerWidgets = markerPositions.map((pos) =>
-                              _buildMarkerWidget(
-                                  pos, Colors.green, model, "Home"));
+                            final markerWidgets = markerPositions.map((pos) =>
+                                _buildMarkerWidget(
+                                    pos, Colors.green, model, "Home"));
 
-                          final centerLocation = transformer
-                              .fromLatLngToXYCoords(model.liveLocation);
+                            final centerLocation = transformer
+                                .fromLatLngToXYCoords(model.liveLocation);
 
-                          final centerMarkerWidget = _buildMarkerWidget(
-                              centerLocation,
-                              Colors.red,
-                              model,
-                              model.currentUser.name);
+                            final centerMarkerWidget = _buildMarkerWidget(
+                                centerLocation,
+                                Colors.red,
+                                model,
+                                model.currentUser.name);
 
-                          return GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onDoubleTap: _onDoubleTap,
-                            onScaleStart: _onScaleStart,
-                            onScaleUpdate: _onScaleUpdate,
-                            onTapUp: (details) {
-                              final location = transformer
-                                  .fromXYCoordsToLatLng(details.localPosition);
-                              final clicked =
-                                  transformer.fromLatLngToXYCoords(location);
-
-                              print(
-                                  '${location.longitude}, ${location.latitude}');
-                              print('${clicked.dx}, ${clicked.dy}');
-                              print(
-                                  '${details.localPosition.dx}, ${details.localPosition.dy}');
-                            },
-                            child: Listener(
+                            return GestureDetector(
                               behavior: HitTestBehavior.opaque,
-                              onPointerSignal: (event) {
-                                if (event is PointerScrollEvent) {
-                                  final delta = event.scrollDelta;
+                              onDoubleTap: _onDoubleTap,
+                              onScaleStart: _onScaleStart,
+                              onScaleUpdate: _onScaleUpdate,
+                              onTapUp: (details) {
+                                final location =
+                                    transformer.fromXYCoordsToLatLng(
+                                        details.localPosition);
+                                final clicked =
+                                    transformer.fromLatLngToXYCoords(location);
 
-                                  controller.zoom -= delta.dy / 1000.0;
-                                  setState(() {});
-                                }
+                                print(
+                                    '${location.longitude}, ${location.latitude}');
+                                print('${clicked.dx}, ${clicked.dy}');
+                                print(
+                                    '${details.localPosition.dx}, ${details.localPosition.dy}');
                               },
-                              child: Stack(
-                                children: [
-                                  Map(
-                                    controller: controller,
-                                    builder: (context, x, y, z) {
-                                      final url =
-                                          'https://www.google.com/maps/vt/pb=!1m4!1m3!1i$z!2i$x!3i$y!2m3!1e0!2sm!3i420120488!3m7!2sen!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i4111425';
+                              child: Listener(
+                                behavior: HitTestBehavior.opaque,
+                                onPointerSignal: (event) {
+                                  if (event is PointerScrollEvent) {
+                                    final delta = event.scrollDelta;
 
-                                      return CachedNetworkImage(
-                                        imageUrl: url,
-                                        fit: BoxFit.cover,
-                                      );
-                                    },
-                                  ),
-                                  ...markerWidgets,
-                                  centerMarkerWidget,
-                                ],
+                                    controller.zoom -= delta.dy / 1000.0;
+                                    setState(() {});
+                                  }
+                                },
+                                child: Stack(
+                                  children: [
+                                    Map(
+                                      controller: controller,
+                                      builder: (context, x, y, z) {
+                                        final url =
+                                            'https://www.google.com/maps/vt/pb=!1m4!1m3!1i$z!2i$x!3i$y!2m3!1e0!2sm!3i420120488!3m7!2sen!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i4111425';
+
+                                        return CachedNetworkImage(
+                                          imageUrl: url,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    ),
+                                    ...markerWidgets,
+                                    centerMarkerWidget,
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ]),
+                            );
+                          },
+                        ),
               floatingActionButton: FloatingActionButton(
-                onPressed: () => _gotoDefault(model),
+                onPressed: () => _gotoDefault(model, context),
                 tooltip: 'My Location',
                 child: Icon(Icons.my_location),
               ),

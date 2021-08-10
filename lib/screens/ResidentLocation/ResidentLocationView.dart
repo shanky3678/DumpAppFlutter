@@ -66,7 +66,6 @@ class _ResidentLocationState extends State<ResidentLocation> {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ResidentLocationViewModel>.reactive(
-        disposeViewModel: false,
         onModelReady: (model) {
           controller.center = model.myLocation;
           model.notifyListeners();

@@ -287,4 +287,11 @@ class FirebaseService {
   updateToken(userId, String token) async {
     await _residentCollection.doc(userId).update({"AndroidToken": token});
   }
+
+  endTrip(String userId) async {
+    await _driverCollection.doc(userId).update({
+      "Lat": 0.01,
+      "Lon": 0.01,
+    });
+  }
 }
