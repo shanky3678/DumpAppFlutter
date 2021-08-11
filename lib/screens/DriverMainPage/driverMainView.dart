@@ -129,8 +129,8 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                           margin: EdgeInsets.all(10.0),
                           child: RaisedButton(
                             onPressed: () {
-                              startTrip(true, model);
                               model.startTrip();
+                              startTrip(true, model);
                             },
                             color: Colors.green,
                             child: Text(
